@@ -1,8 +1,6 @@
 package gohelprabbitmq
 
 import (
-	"errors"
-
 	"github.com/streadway/amqp"
 )
 
@@ -31,26 +29,4 @@ func NewConsumerSettings(name string) *ConsumerSettings {
 // GetName returns the consumer name
 func (settings *ConsumerSettings) GetName() (name string) {
 	return settings.name
-}
-
-// ConsumeQueue will consume the queue using the current settings provided the channel and queue name
-func (settings *ConsumerSettings) ConsumeQueue(channel *Channel, queueName string) (deliveryChannel <-chan amqp.Delivery, err error) {
-	return channel.Consume(
-		queueName,
-		settings.name,
-		settings.AutoAck,
-		settings.Exclusive,
-		settings.NoLocal,
-		settings.NoWait,
-		settings.Arguments,
-	)
-}
-
-// StopConsumingQueue will stop consuming the queue on the specified channel
-func (settings *ConsumerSettings) StopConsumingQueue(channel *Channel) (err error) {
-	if settings.name == "" {
-		return errors.New("Cannot stop an unnamed consumer")
-	}
-
-	return channel.Cancel(settings.name, settings.NoWait)
 }

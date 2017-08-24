@@ -30,15 +30,3 @@ func NewQueueSettings(name string) *QueueSettings {
 func (settings *QueueSettings) GetName() (name string) {
 	return settings.name
 }
-
-// DeclareQueue declares the queue with the current settings in the specified channel
-func (settings *QueueSettings) DeclareQueue(channel *Channel) (queue amqp.Queue, err error) {
-	return channel.QueueDeclare(
-		settings.name,
-		settings.Durable,
-		settings.DeleteWhenUnused,
-		settings.Exclusive,
-		settings.NoWait,
-		settings.Arguments,
-	)
-}
