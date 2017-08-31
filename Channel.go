@@ -14,7 +14,7 @@ type Channel struct {
 
 // ConsumeQueue will consume the queue using the received settings and queue name on the channel itself
 func (channel *Channel) ConsumeQueue(settings *ConsumerSettings, queueName string) (deliveryChannel <-chan amqp.Delivery, err error) {
-	return channel.Channel.Consume(
+	return channel.Consume(
 		queueName,
 		settings.name,
 		settings.AutoAck,
@@ -27,7 +27,7 @@ func (channel *Channel) ConsumeQueue(settings *ConsumerSettings, queueName strin
 
 // DeclareQueue declares the queue with the received settings on the channel itself
 func (channel *Channel) DeclareQueue(settings *QueueSettings) (queue amqp.Queue, err error) {
-	return channel.Channel.QueueDeclare(
+	return channel.QueueDeclare(
 		settings.name,
 		settings.Durable,
 		settings.DeleteWhenUnused,
