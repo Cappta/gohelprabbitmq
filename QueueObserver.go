@@ -29,7 +29,7 @@ func (observer *QueueObserver) AwaitConsumer(timeout time.Duration) (err error) 
 
 	timeoutUnixNano := time.Now().Add(timeout).UnixNano()
 	for time.Now().UnixNano() <= timeoutUnixNano {
-		queue, err := observer.settings.DeclareQueue(channel)
+		queue, err := channel.DeclareQueue(observer.settings)
 		if err != nil {
 			return err
 		}

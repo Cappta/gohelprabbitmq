@@ -49,12 +49,12 @@ func (consumer *SimpleConsumer) Consume(handle func(delivery amqp.Delivery)) (er
 	}
 	defer consumer.closeChannel()
 
-	queue, err := consumer.queueSettings.DeclareQueue(consumer.consumingChannel)
+	queue, err := consumer.consumingChannel.DeclareQueue(consumer.queueSettings)
 	if err != nil {
 		return
 	}
 
-	deliveryChannel, err := consumer.consumerSettings.ConsumeQueue(consumer.consumingChannel, queue.Name)
+	deliveryChannel, err := consumer.consumingChannel.ConsumeQueue(consumer.consumerSettings, queue.Name)
 	if err != nil {
 		return
 	}
@@ -76,5 +76,5 @@ func (consumer *SimpleConsumer) StopConsuming() (err error) {
 		return errors.New("Not currently consuming")
 	}
 
-	return consumer.consumerSettings.StopConsumingQueue(consumer.consumingChannel)
+	return consumer.consumingChannel.StopConsumingQueue(consumer.consumerSettings)
 }
