@@ -2,7 +2,6 @@ package gohelprabbitmq
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/streadway/amqp"
@@ -16,9 +15,9 @@ type AsyncConsumer struct {
 }
 
 // NewAsyncConsumer creates a new BufferedConsumer
-func NewAsyncConsumer(simpleConsumer *SimpleConsumer) *AsyncConsumer {
+func NewAsyncConsumer(connection *Connection, name string) *AsyncConsumer {
 	return &AsyncConsumer{
-		simpleConsumer,
+		NewSimpleConsumer(connection, name),
 		make(chan *amqp.Delivery),
 	}
 }
@@ -26,7 +25,6 @@ func NewAsyncConsumer(simpleConsumer *SimpleConsumer) *AsyncConsumer {
 // Consume will start consuming the queue
 func (consumer *AsyncConsumer) Consume() (err error) {
 	return consumer.SimpleConsumer.Consume(func(delivery amqp.Delivery) {
-		fmt.Println(delivery)
 		consumer.buffer <- &delivery
 	})
 }
