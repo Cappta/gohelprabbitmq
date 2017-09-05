@@ -36,6 +36,11 @@ func NewConnection(user, password, host string, port int) *Connection {
 	}
 }
 
+// ConnectLocallyWithDefaultUser will return a new Connection with the guest user and password on localhost at the default port 5672
+func ConnectLocallyWithDefaultUser() *Connection {
+	return NewConnection("guest", "guest", "127.0.0.1", 5672)
+}
+
 // GetConnection returns the current Connection
 func (connection *Connection) GetConnection() *amqp.Connection {
 	return connection.connection
