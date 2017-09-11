@@ -8,7 +8,7 @@ import (
 
 // SimpleConsumer is a consumer which will simply consume a queue
 type SimpleConsumer struct {
-	Connection       *Connection
+	connection       *Connection
 	QueueSettings    *QueueSettings
 	ConsumerSettings *ConsumerSettings
 
@@ -27,7 +27,7 @@ func NewSimpleConsumer(connection *Connection, name string) *SimpleConsumer {
 
 // Consume connects to RabbitMQ and consumes Queue with the provided callback
 func (consumer *SimpleConsumer) Consume(callback func(delivery amqp.Delivery)) (err error) {
-	consumer.consumingChannel, err = consumer.Connection.Connect()
+	consumer.consumingChannel, err = consumer.connection.Connect()
 	if err != nil {
 		return
 	}
