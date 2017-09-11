@@ -81,7 +81,6 @@ func TestRPC(t *testing.T) {
 																				Convey("Then returned value should equal provided value", func() {
 																					So(returnedMessageContainer.Path(path).Data().(string), ShouldEqual, anyString)
 																					Convey("Then RPC's path should not exist", func() {
-																						fmt.Println(":" + returnedMessageContainer.String())
 																						So(returnedMessageContainer.Exists(rpcPath), ShouldBeFalse)
 																					})
 																				})

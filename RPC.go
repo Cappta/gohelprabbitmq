@@ -103,12 +103,10 @@ func (rpc *RPC) popDeliveryCallback(container *gabs.Container) (callback chan *a
 		return nil, errContainerMissingRPC
 	}
 	id := rpcContainerParent.Path(rpcIDPath).Data().(string)
-	fmt.Println(container.String())
 	err = rpcContainerParent.Delete(rpcPath)
 	if err != nil {
 		return
 	}
-	fmt.Println(container.String())
 
 	rpc.mutex.Lock()
 	defer rpc.mutex.Unlock()
