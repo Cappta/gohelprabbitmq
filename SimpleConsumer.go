@@ -8,59 +8,43 @@ import (
 
 // SimpleConsumer is a consumer which will simply consume a queue
 type SimpleConsumer struct {
-	connection *Connection
-
-	queueSettings *QueueSettings
-
-	consumerSettings *ConsumerSettings
+	connection       *Connection
+	QueueSettings    *QueueSettings
+	ConsumerSettings *ConsumerSettings
 
 	consumingChannel *Channel
 }
 
 // NewSimpleConsumer creates a SimpleConsumer structure
-func NewSimpleConsumer(connection *Connection, queueSettings *QueueSettings, consumerSettings *ConsumerSettings) *SimpleConsumer {
+func NewSimpleConsumer(connection *Connection, name string) *SimpleConsumer {
 	return &SimpleConsumer{
-		connection:       connection,
-		queueSettings:    queueSettings,
-		consumerSettings: consumerSettings,
+		connection,
+		NewQueueSettings(name),
+		NewConsumerSettings(name),
+		nil,
 	}
 }
 
-// GetConnection returns the connection struct
-func (consumer *SimpleConsumer) GetConnection() (connection *Connection) {
-	return consumer.connection
-}
-
-// GetQueueSettings returns the queueSettings struct
-func (consumer *SimpleConsumer) GetQueueSettings() (queueSettings *QueueSettings) {
-	return consumer.queueSettings
-}
-
-// GetConsumerSettings returns the consumerSettings struct
-func (consumer *SimpleConsumer) GetConsumerSettings() (consumerSettings *ConsumerSettings) {
-	return consumer.consumerSettings
-}
-
 // Consume connects to RabbitMQ and consumes Queue with the provided callback
-func (consumer *SimpleConsumer) Consume(handle func(delivery amqp.Delivery)) (err error) {
+func (consumer *SimpleConsumer) Consume(callback func(delivery amqp.Delivery)) (err error) {
 	consumer.consumingChannel, err = consumer.connection.Connect()
 	if err != nil {
 		return
 	}
 	defer consumer.closeChannel()
 
-	queue, err := consumer.consumingChannel.DeclareQueue(consumer.queueSettings)
+	queue, err := consumer.consumingChannel.DeclareQueue(consumer.QueueSettings)
 	if err != nil {
 		return
 	}
 
-	deliveryChannel, err := consumer.consumingChannel.ConsumeQueue(consumer.consumerSettings, queue.Name)
+	deliveryChannel, err := consumer.consumingChannel.ConsumeQueue(consumer.ConsumerSettings, queue.Name)
 	if err != nil {
 		return
 	}
 
 	for delivery := range deliveryChannel {
-		go handle(delivery)
+		go callback(delivery)
 	}
 	return errors.New("Disconnected")
 }
@@ -76,5 +60,5 @@ func (consumer *SimpleConsumer) StopConsuming() (err error) {
 		return errors.New("Not currently consuming")
 	}
 
-	return consumer.consumingChannel.StopConsumingQueue(consumer.consumerSettings)
+	return consumer.consumingChannel.StopConsumingQueue(consumer.ConsumerSettings)
 }

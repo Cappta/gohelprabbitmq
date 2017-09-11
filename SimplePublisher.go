@@ -36,16 +36,6 @@ func NewSimplePublisher(connection *Connection, path string) *SimplePublisher {
 	}
 }
 
-// GetExchange gets the exchange
-func (publisher *SimplePublisher) GetExchange() (queueName string) {
-	return publisher.exchange
-}
-
-// GetKey gets the key
-func (publisher *SimplePublisher) GetKey() (queueName string) {
-	return publisher.key
-}
-
 // Publish publishes a message directly into a queue
 func (publisher *SimplePublisher) Publish(message []byte) (err error) {
 	channel, err := publisher.connection.Connect()
