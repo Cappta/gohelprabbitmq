@@ -30,7 +30,7 @@ func (messageRouter *MessageRouter) Route(container *gabs.Container) (err error)
 
 func (messageRouter *MessageRouter) popRoutePath(container *gabs.Container) (routePath string, err error) {
 	if container.ExistsP(messageRouter.forwardToPath) == false {
-		return popRPCQueue(getRPCContainerParent(container))
+		return popRPCQueue(container)
 	}
 
 	routePath = container.Path(messageRouter.forwardToPath).Data().(string)
