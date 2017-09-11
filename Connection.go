@@ -41,11 +41,6 @@ func ConnectLocallyWithDefaultUser() *Connection {
 	return NewConnection("guest", "guest", "127.0.0.1", 5672)
 }
 
-// GetConnection returns the current Connection
-func (connection *Connection) GetConnection() *amqp.Connection {
-	return connection.connection
-}
-
 // Connect will connect if disconnected, increment the active connections and return a new channel
 func (connection *Connection) Connect() (channel *Channel, err error) {
 	connection.mutex.Lock()
