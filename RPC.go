@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Jeffail/gabs"
+	"github.com/Cappta/gohelpgabs"
 	"github.com/satori/go.uuid"
 	"github.com/streadway/amqp"
 )
@@ -42,13 +42,13 @@ func NewRPC(consumer *SimpleConsumer, timeout time.Duration) *RPC {
 }
 
 // Prepare prepares a container given a consumer to be able to forward the message and receive the reply
-func (rpc *RPC) Prepare(container *gabs.Container) <-chan *amqp.Delivery {
+func (rpc *RPC) Prepare(container *gohelpgabs.Container) <-chan *amqp.Delivery {
 	id := uuid.NewV4().String()
 	rpc.appendCallbackData(id, container)
 	return rpc.allocateCallback(id)
 }
 
-func (rpc *RPC) appendCallbackData(id string, container *gabs.Container) {
+func (rpc *RPC) appendCallbackData(id string, container *gohelpgabs.Container) {
 	containerParent := getRPCContainerParent(container)
 	containerParent.SetP(id, rpcIDPath)
 	containerParent.SetP(fmt.Sprintf("@%s", rpc.QueueSettings.GetName()), rpcQueuePath)
@@ -82,7 +82,7 @@ func (rpc *RPC) Consume() error {
 }
 
 func (rpc *RPC) routeDelivery(delivery *amqp.Delivery) (err error) {
-	container, err := gabs.ParseJSON(delivery.Body)
+	container, err := gohelpgabs.ParseJSON(delivery.Body)
 	if err != nil {
 		return
 	}
@@ -97,7 +97,7 @@ func (rpc *RPC) routeDelivery(delivery *amqp.Delivery) (err error) {
 	return
 }
 
-func (rpc *RPC) popDeliveryCallback(container *gabs.Container) (callback chan *amqp.Delivery, err error) {
+func (rpc *RPC) popDeliveryCallback(container *gohelpgabs.Container) (callback chan *amqp.Delivery, err error) {
 	rpcContainerParent := getRPCContainerParent(container)
 	if rpcContainerParent.ExistsP(rpcIDPath) == false {
 		return nil, errContainerMissingRPC
@@ -116,7 +116,7 @@ func (rpc *RPC) popDeliveryCallback(container *gabs.Container) (callback chan *a
 	return nil, errCallbackExpired
 }
 
-func popRPCQueue(container *gabs.Container) (queue string, err error) {
+func popRPCQueue(container *gohelpgabs.Container) (queue string, err error) {
 	rpcContainerParent := getRPCContainerParent(container)
 	if rpcContainerParent.ExistsP(rpcIDPath) == false {
 		return "", errContainerMissingRPC
@@ -126,7 +126,7 @@ func popRPCQueue(container *gabs.Container) (queue string, err error) {
 	return
 }
 
-func getRPCContainerParent(container *gabs.Container) (rpcContainer *gabs.Container) {
+func getRPCContainerParent(container *gohelpgabs.Container) (rpcContainer *gohelpgabs.Container) {
 	rpcContainer = container
 	for rpcContainer.Exists(rpcPath, rpcPath) {
 		rpcContainer = rpcContainer.Search(rpcPath)

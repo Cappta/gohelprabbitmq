@@ -6,7 +6,7 @@ import (
 	"time"
 
 	. "github.com/Cappta/gofixture"
-	"github.com/Jeffail/gabs"
+	"github.com/Cappta/gohelpgabs"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -40,7 +40,7 @@ func TestRPC(t *testing.T) {
 		Convey("Given any string with length between 10 and 100", func() {
 			anyString := AnyString(AnyIntBetween(10, 100))
 			Convey("Given a json container with the string set as value", func() {
-				container := gabs.New()
+				container := gohelpgabs.New()
 				path := "Value"
 				container.SetP(anyString, path)
 				Convey("When preparing the rpc", func() {
@@ -56,7 +56,7 @@ func TestRPC(t *testing.T) {
 									Convey("Then message should not be nil", func() {
 										So(message, ShouldNotBeNil)
 										Convey("Then message should be a valid json", func() {
-											messageContainer, err := gabs.ParseJSON(message.Body)
+											messageContainer, err := gohelpgabs.ParseJSON(message.Body)
 											So(err, ShouldBeNil)
 											Convey("Then value's path should exist", func() {
 												So(messageContainer.ExistsP(path), ShouldBeTrue)
@@ -74,7 +74,7 @@ func TestRPC(t *testing.T) {
 																	Convey("Then message should not be nil", func() {
 																		So(returnedMessage, ShouldNotBeNil)
 																		Convey("Then message should be a valid json", func() {
-																			returnedMessageContainer, err := gabs.ParseJSON(returnedMessage.Body)
+																			returnedMessageContainer, err := gohelpgabs.ParseJSON(returnedMessage.Body)
 																			So(err, ShouldBeNil)
 																			Convey("Then value's path should exist", func() {
 																				So(returnedMessageContainer.ExistsP(path), ShouldBeTrue)
